@@ -64,7 +64,6 @@ class ProgressBar:
 @click.option('--output-dir', '-o', prompt="Enter Output Directory", help='The remote directory where files will be transferred.')
 @click.option('--command', '-c', type=str, prompt="Enter Command to Run Remotely", help='The command you want to run after transfer.')
 def main(host, username, password, port, input, output_dir, command):
-    print(input, output_dir)
     output_dir = output_dir.replace("\'", "").replace("\\", "/")
 
     # Establish an SSH connection using the provided parameters
@@ -81,13 +80,12 @@ def main(host, username, password, port, input, output_dir, command):
 
     # Use SCPClient to transfer files
     with SCPClient(ssh_terminal.client.get_transport(), progress=bar.Progress) as scp:
-        print(input, output_dir)
         scp.put(input, "~/Documents/Test", True)
         bar.Complete()
 
     # Flush and run the provided command on the remote server
     ssh_terminal.Send("cd " + output_dir + "\n")
-    # ssh_terminal.Flush()
+    ssh_terminal.Flush()
     ssh_terminal.Send("\n" + command + "\n")
     ssh_terminal.RunTerminal()
 
