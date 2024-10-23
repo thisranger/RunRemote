@@ -80,7 +80,7 @@ def main(host, username, password, port, input, output_dir, command):
 
     # Use SCPClient to transfer files
     with SCPClient(ssh_terminal.client.get_transport(), progress=bar.Progress) as scp:
-        scp.put(input, "~/Documents/Test", True)
+        scp.put(input, output_dir, True)
         bar.Complete()
 
     # Flush and run the provided command on the remote server

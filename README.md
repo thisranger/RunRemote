@@ -25,6 +25,8 @@ python RunRemote.py -h Test -u this -s 1234 -i test.py -o '~\Documents\Test' -c 
 
 This will transfer the `test.py` file and execute it on the remote server using the specified command (`python test.py`).
 
+To close the SSH-session press `ctrl-[`.
+
 **Note:**  
 - The **output directory path** (`-o`) is surrounded by single quotes to prevent the shell from expanding `~`.
 - The **command** (`-c`) is wrapped in double quotes to ensure it is executed properly in the specified directory.
