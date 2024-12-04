@@ -29,7 +29,7 @@ To close the SSH-session press `ctrl-[`.
 
 **Note:**  
 - The **output directory path** (`-o`) is surrounded by single quotes to prevent the shell from expanding `~`.
-- The **command** (`-c`) is wrapped in double quotes to ensure it is executed properly in the specified directory.
+- The **commands** (`-c`) is wrapped in double quotes to ensure it is executed properly in the specified directory. For every command add a new (`-c "command"`).
 - It should work on both Linux and Windows, though special keys might only work properly when connecting from Windows to Linux or Linux to Linux.
 ### Available Options
 
@@ -51,8 +51,8 @@ To close the SSH-session press `ctrl-[`.
 - `-o, --outputDir TEXT`  
    The remote directory where files will be transferred.
   
-- `-c, --command TEXT`  
-   The command you want to run after the file transfer.
+- `-c, --commands TEXT`  
+   The commands you want to run after the file transfer. For every command add a new -c "command".
   
 - `--help`  
    Displays this help message and exits.

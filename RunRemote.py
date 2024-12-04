@@ -2,6 +2,7 @@ import os
 import tqdm
 import click
 from scp import SCPClient
+
 from SshMiniTerm import SshMiniTerm, PrintInfo
 
 
@@ -60,11 +61,11 @@ class ProgressBar:
 @click.option('--username', '-u', prompt="Enter SSH Username", help='The SSH username for authentication.')
 @click.option('--password', '-s', prompt=True, hide_input=True, confirmation_prompt=False, help='The SSH password for authentication.')
 @click.option('--port', '-p', default=22, type=int, help='The SSH port to connect to.')
-@click.option('--input', '-i', type=str, prompt="Enter Directory or File which to transfer", help='The local directory or file to transfer to the remote server.')
+@click.option('--input-path', '-i', type=click.Path(True, True, True, False, True, False, True, None, False),
+              prompt="Enter Directory or File which to transfer", help='The local directory or file to transfer to the remote server.')
 @click.option('--output-dir', '-o', prompt="Enter Output Directory", help='The remote directory where files will be transferred.')
-@click.option('--command', '-c', type=str, prompt="Enter Command to Run Remotely", help='The command you want to run after transfer.')
-def main(host, username, password, port, input, output_dir, command):
-    output_dir = output_dir.replace("\'", "").replace("\\", "/")
+@click.option('--commands', '-c', type=str, multiple=True, prompt="Enter Commands to Run Remotely.", help='The commands you want to run after transfer. For every command add a new -c "command".')
+def main(host, username, password, port, input_path, output_dir, commands):
 
     # Establish an SSH connection using the provided parameters
     ssh_terminal = SshMiniTerm(host, username, password, port)
@@ -73,20 +74,23 @@ def main(host, username, password, port, input, output_dir, command):
     PrintInfo("Starting transfer:")
 
     # Set up the progress bar for file transfer
-    if os.path.isdir(input):
-        bar = ProgressBar(len(os.listdir(input)), GetDirSize(input))
+    if os.path.isdir(input_path):
+        bar = ProgressBar(len(os.listdir(input_path)), GetDirSize(input_path))
     else:
         bar = ProgressBar(1)
 
     # Use SCPClient to transfer files
     with SCPClient(ssh_terminal.client.get_transport(), progress=bar.Progress) as scp:
-        scp.put(input, output_dir, True)
+        scp.put(input_path, output_dir, True)
         bar.Complete()
 
     # Flush and run the provided command on the remote server
     ssh_terminal.Send("cd " + output_dir + "\n")
     ssh_terminal.Flush()
-    ssh_terminal.Send("\n" + command + "\n")
+
+    for i in commands:
+        ssh_terminal.Send(i + "\n")
+
     ssh_terminal.RunTerminal()
 
 
